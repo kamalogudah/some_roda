@@ -6,8 +6,7 @@ class App < Roda
   mystery_guest = Pizza.new('Mozzarella')
 
   route do |r|
-    p r
-    p 'ROUTE block'
+    p [0, r.matched_path, r.remaining_path]
     r.get 'hello', String do |name|
       "<h1>Hello #{name}!</h1>"
     end
@@ -36,6 +35,7 @@ class App < Roda
     end
 
     r.on 'posts' do
+      p [1, r.matched_path, r.remaining_path]
       post_list = {
         1 => 'Post[1]',
         2 => 'Post[2]',
@@ -44,12 +44,22 @@ class App < Roda
         5 => 'Post[5]'
       }
 
-      r.is Integer do |id|
-        post_list[id]
-      end
-
       r.is do
+        p [3, r.matched_path, r.remaining_path]
         post_list.values.map { |post| post }.join(' | ')
+      end
+      r.on Integer do |id|
+        post = post_list[id]
+
+        r.on 'show' do
+          r.is do
+            "Showing #{post}"
+          end
+
+          r.is 'detail' do
+            "Showing #{post} | Last access: #{Time.now.strftime('%H:%M:%S')}"
+          end
+        end
       end
     end
   end

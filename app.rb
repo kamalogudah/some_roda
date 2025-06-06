@@ -3,6 +3,7 @@ Pizza = Struct.new(:flavor)
 
 class App < Roda
   plugin :h
+  plugin :all_verbs
   mystery_guest = Pizza.new('Mozzarella')
 
   route do |r|
@@ -49,6 +50,28 @@ class App < Roda
         post_list.values.map { |post| post }.join(' | ')
       end
       r.on Integer do |id|
+        r.head do
+          # Handle HEAD /posts/$ID
+        end
+
+        r.get do
+          # Handle GET /posts/$ID
+        end
+
+        r.post do
+          # Handle POST /posts/$ID
+        end
+
+        r.put do
+          # Handle PUT /posts/$ID
+        end
+
+        r.patch do
+          # Handle PATCH /posts/$ID
+        end
+        r.delete do
+          # Handle DELETE /posts/$ID
+        end
         post = post_list[id]
 
         r.on 'show' do

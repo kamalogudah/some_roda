@@ -2,6 +2,13 @@ require 'roda'
 Pizza = Struct.new(:flavor)
 
 class App < Roda
+  class RodaRequest
+    def with_params(hash, &block)
+      return unless hash <= params
+      on(&block)
+      #
+    end
+  end
   plugin :h
   plugin :all_verbs
   mystery_guest = Pizza.new('Mozzarella')
@@ -37,6 +44,9 @@ class App < Roda
 
     r.on 'goodbye' do
       "Goodbye, #{title}!"
+    end
+
+    r.with_params 'secret' => "Um9kYQ==\n" do
     end
 
     r.on 'posts' do

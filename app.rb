@@ -8,6 +8,10 @@ class App < Roda
 
   route do |r|
     p [0, r.matched_path, r.remaining_path]
+
+    r.root do
+      'Root Path'
+    end
     r.get 'hello', String do |name|
       "<h1>Hello #{name}!</h1>"
     end
@@ -45,9 +49,19 @@ class App < Roda
         5 => 'Post[5]'
       }
 
+      posts = (0..50).map { |i| "Post #{i}" }
+
       r.is do
         p [3, r.matched_path, r.remaining_path]
         post_list.values.map { |post| post }.join(' | ')
+      end
+
+      r.get true do
+        posts.join(' | ')
+      end
+
+      r.get Integer do |id|
+        posts[id]
       end
       r.on Integer do |id|
         r.head do

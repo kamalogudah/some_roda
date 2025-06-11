@@ -49,6 +49,10 @@ class App < Roda
     r.with_params 'secret' => "Um9kYQ==\n" do
     end
 
+    %w[about contact_us license].each do |route_name|
+      r.get(route_name) { view(route_name) }
+    end
+
     r.on 'posts' do
       p [1, r.matched_path, r.remaining_path]
       post_list = {
@@ -75,12 +79,12 @@ class App < Roda
       # end
 
       r.get Integer do |id|
-        unless post = posts[id]
-    response.status = 404
-    next "No matching post"
-  end
-        access_time = Time.now.strftime("%H:%M")
-  "Post: #{post} | Accessing at #{access_time}"
+        unless post == posts[id]
+          response.status = 404
+          next 'No matching post'
+        end
+        access_time = Time.now.strftime('%H:%M')
+        "Post: #{post} | Accessing at #{access_time}"
       end
 
       r.on Integer do |id|

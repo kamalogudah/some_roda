@@ -5,8 +5,8 @@ class App < Roda
   class RodaRequest
     def with_params(hash, &block)
       return unless hash <= params
+
       on(&block)
-      #
     end
   end
   plugin :h
@@ -70,9 +70,19 @@ class App < Roda
         posts.join(' | ')
       end
 
+      # r.get Integer do |id|
+      #   posts[id]
+      # end
+
       r.get Integer do |id|
-        posts[id]
+        unless post = posts[id]
+    response.status = 404
+    next "No matching post"
+  end
+        access_time = Time.now.strftime("%H:%M")
+  "Post: #{post} | Accessing at #{access_time}"
       end
+
       r.on Integer do |id|
         r.head do
           # Handle HEAD /posts/$ID
